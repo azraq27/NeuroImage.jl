@@ -11,6 +11,9 @@ type Dataset
     pyobj::PyObject
 end
 
+Dataset{T<:Real,N,K<:Real}(fname::String,a::AbstractArray{T,N},aff::Array{K,2}) = Dataset(fname,nib.Nifti1Image(a,aff))
+Dataset{T<:Real,N}(fname::String,a::AbstractArray{T,N},template::Dataset) = Dataset(fname,nib.Nifti1Image(a,affine(template)))
+
 @pyimport nibabel as nib
 
 function loadnifti(fname::String)
