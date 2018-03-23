@@ -1,7 +1,7 @@
 module NeuroImage
 
 export Dataset
-export loadnifti,savenifti,data,affine,size
+export loadnifti,save,data,affine,size
 export ijk_to_xyz,xyz_to_ijk
 
 using PyCall
@@ -26,7 +26,7 @@ function Dataset{T<:Real}(d::Dataset,a::AbstractArray{T,3})
     Dataset(d.fname,img)
 end
 
-function savenifti(d::Dataset,fname::String)
+function save(d::Dataset,fname::String)
     nib.save(d.pyobj,fname)
 end
 
