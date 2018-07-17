@@ -2,6 +2,7 @@ module NeuroImage
 
 export Dataset
 export loadnifti,save,data,affine,size
+export cluster
 export ijk_to_xyz,xyz_to_ijk
 
 using PyCall
