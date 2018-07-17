@@ -9,16 +9,23 @@ using PyCall
 type Dataset
     fname::String
     pyobj::PyObject
+    info::PyObject
+    subbricks::Vector{String}
 end
+
+Dataset(fname::String,pyobj::PyObject) = Dataset(fname,pyobj,PyObject(nothing),String[])
 
 Dataset{T<:Real,N,K<:Real}(fname::String,a::AbstractArray{T,N},aff::Array{K,2}) = Dataset(fname,nib.Nifti1Image(a,aff))
 Dataset{T<:Real,N}(fname::String,a::AbstractArray{T,N},template::Dataset) = Dataset(fname,nib.Nifti1Image(a,affine(template)))
 
 @pyimport nibabel as nib
+@pyimport neural as nl
 
 function loadnifti(fname::String)
     img = nib.load(fname)
-    return Dataset(fname,img)
+    info = nl.dset_info(fname)
+    subbricks = [x["label"] for x in info[:subbricks]]
+    return Dataset(fname,img,info,subbricks)
 end
 
 function Dataset{T<:Real}(d::Dataset,a::AbstractArray{T,3})
