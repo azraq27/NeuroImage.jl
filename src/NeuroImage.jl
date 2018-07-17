@@ -33,6 +33,11 @@ function Dataset{T<:Real}(d::Dataset,a::AbstractArray{T,3})
     Dataset(d.fname,img)
 end
 
+function Dataset{T<:Real}(a::AbstractArray{T,3},fname::String="noname.nii.gz")
+    img = nib.Nifti1Image(a,eye(4),nib.Nifti1Header())
+    Dataset(fname,img)
+end
+
 function save(d::Dataset,fname::String)
     nib.save(d.pyobj,fname)
 end
