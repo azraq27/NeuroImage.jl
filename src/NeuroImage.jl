@@ -84,4 +84,27 @@ function Base.show(io::IO, mime::MIME"image/png", d::Dataset)
     show(io,mime,colorview(Gray,dd))
 end
 
+# AFNI dependent functions
+
+function cluster{T<:Real,K<:Real,L<:Real}(clust_map::Array{T,3},r::K,clust_size::L)
+    tmpname = "tmp.nii.gz"
+    clustname = "tmp_clust.nii.gz"
+    for n in [tmpname,clustname]
+        isfile(n) && rm(n)
+    end
+    temp_dset = Dataset(clust_map,tmpname)
+    NeuroImage.save(temp_dset)
+    run(pipeline(`3dmerge -1clust $r $clust_size -prefix $clustname $tmpname`,stdout=DevNull,stderr=DevNull))
+    newd = data(loadnifti(clustname))
+    for n in [tmpname,clustname]
+        isfile(n) && rm(n)
+    end
+    return newd
+end
+
+function cluster{K<:Real,L<:Real}(clust_map::BitArray{3},r::K,clust_size::L)
+    c = cluster(Array{Int16,3}(clust_map),r,clust_size)
+    return c.!=0
+end
+
 end
