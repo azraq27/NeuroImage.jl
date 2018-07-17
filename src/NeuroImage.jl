@@ -34,7 +34,7 @@ function Dataset{T<:Real}(d::Dataset,a::AbstractArray{T,3})
 end
 
 function Dataset{T<:Real}(a::AbstractArray{T,3},fname::String="noname.nii.gz")
-    img = nib.Nifti1Image(a,eye(4),nib.Nifti1Header())
+    img = nib.Nifti1Image(a,nothing)
     Dataset(fname,img)
 end
 
