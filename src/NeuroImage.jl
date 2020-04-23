@@ -7,7 +7,7 @@ export ijk_to_xyz,xyz_to_ijk
 
 using PyCall
 
-type Dataset
+mutable struct Dataset
     fname::String
     pyobj::PyObject
     info::PyObject
@@ -16,8 +16,8 @@ end
 
 Dataset(fname::String,pyobj::PyObject) = Dataset(fname,pyobj,PyObject(nothing),String[])
 
-Dataset{T<:Real,N,K<:Real}(fname::String,a::AbstractArray{T,N},aff::Array{K,2}) = Dataset(fname,nib.Nifti1Image(a,aff))
-Dataset{T<:Real,N}(fname::String,a::AbstractArray{T,N},template::Dataset) = Dataset(fname,nib.Nifti1Image(a,affine(template)))
+Dataset(fname::String,a::AbstractArray{T,N},aff::Array{K,2}) where {T<:Real,N,K<:Real} = Dataset(fname,nib.Nifti1Image(a,aff))
+Dataset(fname::String,a::AbstractArray{T,N},template::Dataset) where {T<:Real,N} = Dataset(fname,nib.Nifti1Image(a,affine(template)))
 
 @pyimport nibabel as nib
 @pyimport neural as nl
